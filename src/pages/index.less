@@ -1,0 +1,67 @@
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero {
+  background: linear-gradient(135deg, #1677ff15, #1677ff05);
+  border: 1px solid #1677ff30;
+  border-radius: 16px;
+  padding: 40px;
+  margin-bottom: 28px;
+}
+
+.heroTitle {
+  margin: 0 0 16px !important;
+  font-size: 32px !important;
+  background: linear-gradient(135deg, #1677ff, #722ed1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroDesc {
+  font-size: 16px;
+  color: #434343;
+  line-height: 1.8;
+  margin-bottom: 24px !important;
+}
+
+.stats {
+  display: flex;
+  gap: 48px;
+}
+
+.topics {
+  margin-top: 0;
+}
+
+.topicCard {
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform 0.25s, box-shadow 0.25s;
+  padding: 8px;
+  overflow: hidden;
+}
+
+.topicCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+
+.topicIcon {
+  font-size: 36px;
+}
+
+.topicTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.topicCount {
+  font-size: 13px;
+  opacity: 0.8;
+  font-weight: 500;
+}
