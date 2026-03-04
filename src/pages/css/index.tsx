@@ -118,6 +118,181 @@ function BoxModelDemo() {
   );
 }
 
+// Demo: CSS Grid
+function GridDemo() {
+  const [columns, setColumns] = useState<string>('repeat(3, 1fr)');
+
+  return (
+    <Space direction="vertical" size="small" style={{ width: '100%' }}>
+      <Space>
+        <Text style={{ fontSize: 12 }}>grid-template-columns:</Text>
+        <Select
+          size="small"
+          value={columns}
+          onChange={setColumns}
+          style={{ width: 180 }}
+          options={[
+            { value: 'repeat(3, 1fr)', label: 'repeat(3, 1fr)' },
+            { value: '1fr 2fr 1fr', label: '1fr 2fr 1fr' },
+            { value: 'repeat(2, 1fr)', label: 'repeat(2, 1fr)' },
+            { value: '100px 1fr auto', label: '100px 1fr auto' },
+          ]}
+        />
+      </Space>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: columns,
+          gap: 8,
+          border: '2px dashed #1677ff',
+          borderRadius: 8,
+          padding: 8,
+          minHeight: 80,
+        }}
+      >
+        {['1', '2', '3', '4', '5', '6'].map((item, i) => (
+          <div
+            key={item}
+            style={{
+              background: ['#1677ff', '#52c41a', '#ff4d4f', '#faad14', '#722ed1', '#13c2c2'][i],
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 6,
+              fontWeight: 'bold',
+              minHeight: 36,
+            }}
+          >
+            {item}
+          </div>
+        ))}
+      </div>
+    </Space>
+  );
+}
+
+// Demo: BFC
+function BFCDemo() {
+  const [useBFC, setUseBFC] = useState(false);
+
+  return (
+    <Space direction="vertical" size="small" style={{ width: '100%' }}>
+      <Button size="small" onClick={() => setUseBFC((b) => !b)}>
+        {useBFC ? '关闭 BFC' : '触发 BFC'}
+      </Button>
+      <Text type="secondary" style={{ fontSize: 12 }}>
+        {useBFC ? 'overflow: hidden 触发 BFC，父元素正确包含浮动子元素' : '未触发 BFC，父元素高度塌陷'}
+      </Text>
+      <div
+        style={{
+          border: '2px dashed #1677ff',
+          borderRadius: 8,
+          padding: 8,
+          overflow: useBFC ? 'hidden' : 'visible',
+          background: '#f5f5f5',
+        }}
+      >
+        <div
+          style={{
+            float: 'left',
+            width: 80,
+            height: 60,
+            background: '#1677ff',
+            color: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 6,
+            fontWeight: 'bold',
+          }}
+        >
+          浮动
+        </div>
+        <div
+          style={{
+            height: 40,
+            background: '#e6f4ff',
+            borderRadius: 6,
+            display: 'flex',
+            alignItems: 'center',
+            paddingLeft: 8,
+            fontSize: 13,
+          }}
+        >
+          文字内容区域
+        </div>
+      </div>
+    </Space>
+  );
+}
+
+// Demo: 响应式设计 & 媒体查询
+function ResponsiveDemo() {
+  const [width, setWidth] = useState(400);
+
+  return (
+    <Space direction="vertical" size="small" style={{ width: '100%' }}>
+      <Space direction="vertical" size={2} style={{ width: '100%' }}>
+        <Text style={{ fontSize: 12 }}>模拟视口宽度: {width}px</Text>
+        <Slider min={280} max={800} value={width} onChange={setWidth} />
+      </Space>
+      <div
+        style={{
+          width: width,
+          border: '2px dashed #1677ff',
+          borderRadius: 8,
+          overflow: 'hidden',
+          background: '#fff',
+        }}
+      >
+        <div
+          style={{
+            padding: width >= 768 ? 24 : 16,
+            fontSize: width >= 768 ? 16 : 14,
+            background: '#e6f4ff',
+            fontWeight: 'bold',
+          }}
+        >
+          Header
+        </div>
+        <div
+          style={{
+            padding: width >= 768 ? 24 : 16,
+            display: width >= 768 ? 'flex' : 'block',
+            gap: 16,
+          }}
+        >
+          <div
+            style={{
+              flex: width >= 768 ? 1 : undefined,
+              padding: 12,
+              background: '#f6ffed',
+              borderRadius: 6,
+              marginBottom: width < 768 ? 8 : 0,
+            }}
+          >
+            Sidebar
+          </div>
+          <div
+            style={{
+              flex: width >= 768 ? 2 : undefined,
+              padding: 12,
+              background: '#fff7e6',
+              borderRadius: 6,
+            }}
+          >
+            Main
+          </div>
+        </div>
+        <Text type="secondary" style={{ fontSize: 11, display: 'block', padding: 8 }}>
+          {width < 768 ? '📱 移动端布局' : '🖥️ 平板/桌面布局'}
+        </Text>
+      </div>
+    </Space>
+  );
+}
+
 // Demo: CSS Animation
 function AnimationDemo() {
   const [animating, setAnimating] = useState(false);
@@ -206,6 +381,7 @@ const cssKnowledge = [
     tags: ['布局', 'CSS3'],
     description:
       'Grid 是二维布局方案，可同时控制行和列。通过 grid-template-columns/rows 定义网格结构，grid-area 或 grid-column/row 定位元素。fr 单位表示剩余空间的比例，repeat() 简化重复定义。',
+    demo: <GridDemo />,
     code: `.grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 列等宽 */
@@ -230,6 +406,7 @@ const cssKnowledge = [
     tags: ['布局', '核心概念'],
     description:
       'BFC（Block Formatting Context）是一个独立的渲染区域，内部元素不影响外部。触发 BFC：overflow（非 visible）、float、position（absolute/fixed）、display（inline-block/flex/grid）。BFC 用途：清除浮动、防止 margin 折叠、阻止文字环绕。',
+    demo: <BFCDemo />,
     code: `/* 触发 BFC 的常用方式 */
 .bfc-overflow  { overflow: hidden; }
 .bfc-flex      { display: flex; }
@@ -275,6 +452,7 @@ const cssKnowledge = [
     tags: ['响应式', '移动端'],
     description:
       '响应式设计让页面在不同屏幕尺寸下都有良好体验。核心手段：媒体查询（@media）、相对单位（rem/em/%/vw/vh）、弹性布局（Flex/Grid）、移动端 viewport 设置。CSS 变量（--var）可以在媒体查询中动态改变主题尺寸。',
+    demo: <ResponsiveDemo />,
     code: `/* 移动优先策略 */
 .container {
   padding: 16px;  /* 移动端默认 */
