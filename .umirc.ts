@@ -2,6 +2,7 @@ import { defineConfig } from 'umi';
 
 export default defineConfig({
   title: '前端知识点笔记',
+  conventionLayout: false, // 禁用约定式布局，避免与配置式路由的 layout 重复渲染
   routes: [
     {
       path: '/',

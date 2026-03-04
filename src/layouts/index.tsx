@@ -17,7 +17,7 @@ import {
 } from '@ant-design/icons';
 import styles from './index.less';
 
-const { Sider, Content, Header } = Layout;
+const { Sider, Content } = Layout;
 const { Title } = Typography;
 
 const menuItems = [
@@ -87,19 +87,9 @@ export default function AppLayout() {
           style={{ borderRight: 0 }}
         />
       </Sider>
-      <Layout>
-        <Header className={styles.header}>
-          <div className={styles.headerContent}>
-            <span className={styles.headerTitle}>前端开发知识点笔记</span>
-            <Tag color="blue" style={{ marginLeft: 12 }}>
-              借助 Demo + 文案 梳理知识体系
-            </Tag>
-          </div>
-        </Header>
-        <Content className={styles.content}>
-          <Outlet />
-        </Content>
-      </Layout>
+      <Content className={styles.content}>
+        <Outlet />
+      </Content>
     </Layout>
   );
 }

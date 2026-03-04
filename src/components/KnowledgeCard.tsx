@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Typography, Tag, Divider } from 'antd';
+import { Card, Typography, Tag, Divider, Row, Col } from 'antd';
 import styles from './KnowledgeCard.less';
 
 const { Title, Paragraph, Text } = Typography;
@@ -10,6 +10,9 @@ interface KnowledgePoint {
   description: string | React.ReactNode;
   demo?: React.ReactNode;
   code?: string;
+  codeCompare?: string; // 对照代码，与 code 并排展示
+  codeLabel?: string; // 左侧代码标签（有 codeCompare 时显示）
+  codeCompareLabel?: string; // 右侧对照代码标签
 }
 
 interface KnowledgeCardProps {
@@ -41,12 +44,29 @@ export function KnowledgeCard({ item }: KnowledgeCardProps) {
           <div className={styles.demoContent}>{item.demo}</div>
         </div>
       )}
-      {item.code && (
+      {(item.code || item.codeCompare) && (
         <div className={styles.codeSection}>
           <Text type="secondary" className={styles.demoLabel}>
             💻 示例代码
           </Text>
-          <pre className={styles.codeBlock}>{item.code}</pre>
+          {item.codeCompare ? (
+            <Row gutter={24}>
+              <Col xs={24} md={12}>
+                {item.codeLabel && (
+                  <Text type="secondary" style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>{item.codeLabel}</Text>
+                )}
+                <pre className={styles.codeBlock}>{item.code}</pre>
+              </Col>
+              <Col xs={24} md={12}>
+                {item.codeCompareLabel && (
+                  <Text type="secondary" style={{ display: 'block', marginBottom: 8, fontSize: 12 }}>{item.codeCompareLabel}</Text>
+                )}
+                <pre className={styles.codeBlock}>{item.codeCompare}</pre>
+              </Col>
+            </Row>
+          ) : (
+            <pre className={styles.codeBlock}>{item.code}</pre>
+          )}
         </div>
       )}
     </Card>

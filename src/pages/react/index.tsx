@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useRef, memo } from 'react';
-import { Row, Col, Button, Input, Space, Typography, Badge } from 'antd';
+import { Row, Col, Button, Input, Space, Typography } from 'antd';
 import { KnowledgeCard, PageHeader } from '@/components/KnowledgeCard';
 
 const { Text } = Typography;
@@ -37,6 +37,17 @@ const ChildButton = memo(({ onClick, label }: { onClick: () => void; label: stri
   );
 });
 
+// 不使用 memo 的子组件（用于对比）
+function NonMemoChildButton({ onClick, label }: { onClick: () => void; label: string }) {
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  return (
+    <Button size="small" onClick={onClick}>
+      {label}（子组件渲染 {renderCount.current} 次）
+    </Button>
+  );
+}
+
 function UseCallbackDemo() {
   const [count, setCount] = useState(0);
   const [text, setText] = useState('');
@@ -58,6 +69,34 @@ function UseCallbackDemo() {
       <ChildButton onClick={handleClick} label="增加计数" />
       <Text type="secondary" style={{ fontSize: 12 }}>
         useCallback 保证 onClick 引用稳定，memo 防止子组件因父组件渲染而重渲染。
+      </Text>
+    </Space>
+  );
+}
+
+// 不使用 useCallback 和 memo 的对比 demo
+function NonUseCallbackDemo() {
+  const [count, setCount] = useState(0);
+  const [text, setText] = useState('');
+
+  // 每次渲染都创建新函数，导致子组件重渲染
+  const handleClick = () => {
+    setCount((c) => c + 1);
+  };
+
+  return (
+    <Space direction="vertical" size="small" style={{ width: '100%' }}>
+      <Text style={{ fontSize: 12 }}>输入内容（会导致父组件重渲染）：</Text>
+      <Input
+        size="small"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="输入内容..."
+      />
+      <Text>父组件计数：{count}</Text>
+      <NonMemoChildButton onClick={handleClick} label="增加计数" />
+      <Text type="secondary" style={{ fontSize: 12 }}>
+        无 useCallback/memo，输入时子组件每次都会重渲染。
       </Text>
     </Space>
   );
@@ -190,7 +229,18 @@ setCount(prev => prev + 1);`,
     tags: ['Hooks', '性能优化'],
     description:
       'useCallback 缓存函数引用，避免子组件因父组件重渲染而不必要地重渲染。React.memo 对组件进行浅比较，props 未变化则跳过渲染。两者配合使用效果最佳。注意：过度使用会增加代码复杂度，仅在实际遇到性能问题时使用。',
-    demo: <UseCallbackDemo />,
+    demo: (
+      <Row gutter={24}>
+        <Col xs={24} md={12}>
+          <Text strong style={{ display: 'block', marginBottom: 8 }}>✅ 使用 useCallback + memo</Text>
+          <UseCallbackDemo />
+        </Col>
+        <Col xs={24} md={12}>
+          <Text strong style={{ display: 'block', marginBottom: 8 }}>❌ 不使用（对比）</Text>
+          <NonUseCallbackDemo />
+        </Col>
+      </Row>
+    ),
     code: `// 父组件
 const Parent = () => {
   const [count, setCount] = useState(0);
@@ -213,6 +263,30 @@ const Parent = () => {
 const MemoChild = React.memo(({ onClick }) => (
   <button onClick={onClick}>Click</button>
 ));`,
+    codeLabel: '✅ 使用 useCallback + memo',
+    codeCompareLabel: '❌ 不使用（对比）',
+    codeCompare: `// 父组件（无优化）
+const Parent = () => {
+  const [count, setCount] = useState(0);
+  const [text, setText] = useState('');
+
+  // 每次渲染都创建新函数
+  const handleClick = () => {
+    setCount(c => c + 1);
+  };
+
+  return (
+    <>
+      <input onChange={e => setText(e.target.value)} />
+      <Child onClick={handleClick} /> {/* 输入时也会重渲染 */}
+    </>
+  );
+};
+
+// 普通子组件（无 memo）
+const Child = ({ onClick }) => (
+  <button onClick={onClick}>Click</button>
+);`,
   },
   {
     title: 'useMemo 计算缓存',
